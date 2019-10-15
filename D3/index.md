@@ -154,3 +154,156 @@
 </svg>
 ```
 
+
+
+### 二、选择集与数据
+
+##### 选择元素
+
+选择器是css选择器或者DOM API所选择的元素
+
+* **select**：匹配选择器的第一个元素
+* **selectAll**：匹配选择器的所有元素
+
+
+
+##### 选择集
+
+上述返回为选择集（selection），其操作如下
+
+* selection.**empty**()：判断选择集是否为空
+* selection.**node**()：返回第一个非空元素，空返回null
+* selection.**size**()：返回选择集中的元素个数
+* selection.**attr**(name [, value])：设置 或 获取 属性
+* selection.**property**(name [, value])：设置 或 获取 属性（attr不生效的， 如文本框的value，复选框的value）
+* selection.**classed**(name [, value])：设置 或 获取 选择集的CSS类（value是布尔）
+* selection.**style**(name [, value [, priority]])：设置 或 获取 选择集的样式
+* selection.**text**([value])：设置 或 获取 选择集的文本内容，不包括内部标签，等同innerText
+* selection.**html**([value])：设置 或 获取 选择集的内部html内容，相当于innerHTML
+
+```html
+<p>Paragraph 1</p>
+<p>Paragraph 2</p>
+<p>Paragraph 3</p>
+<script>
+	var paragraphs = d3.selectAll('p')
+  console.log(paragraphs.empty()) // false
+  console.log(paragraphs.node()) // <p>Paragraph 1</p>
+  console.log(paragraphs.size()) // 3
+  
+  // classed
+  d3.select('p')
+    .classed('red', true)
+    .classed({red: true, bigSize: true})
+    .classed('red bigSize', true)
+</script>
+```
+
+
+
+##### 选择集数据
+
+可添加，插入，删除元素
+
+* selection.**append**(name)：在选择集的末尾添加一个元素，name为元素名称
+* selection.**insert**(name [, before])：在选择集中置顶元素前插入一个元素，before是选择器
+* selection.**remove**()：删除选择集中的元素
+
+
+
+##### 数据绑定
+
+将数据绑定到DOM上
+
+* selection.**datum**([value])：选择集中的每一个元素都绑定相同的数据value
+* selection.**data**([values [, key]])：选择集中的每一个元素分别绑定数组values的每一项。key是一个键函数，用于指定绑定数组时的对应规则
+  * update：数组长度 = 元素数量
+  * enter：数组长度 > 元素数量
+  * exit：数组长度 < 元素数量
+
+```javascript
+var dataset = [3, 6, 9, 12, 15]
+var p = d3.selelct('body').selectAll('p')
+var update = p.data(dataset)
+
+console.log(update)
+console.log(update.enter())
+console.log(update.exit())
+
+// data key调整绑定顺序
+var persons = [
+  {id: 6, name: 'a'},
+  {id: 9, name: 'b'},
+  {id: 3, name: 'c'}
+]
+p.data(persons, function (d) {
+  return d.id
+}).text(function (d) {
+  return d.id + ' : ' + d.name
+})
+
+// 输出
+// <p> 3: c </p>
+// <p> 6: a </p>
+// <p> 9: b </p>
+```
+
+
+
+##### 选择集的处理
+
+* **update**部分直接使用
+* **enter**部分可以 selection.enter().append() 的形式添加足够的元素
+* **exit**部分是删除 selection.exit().remove()
+
+
+
+##### 选择集的处理 二
+
+* **filter **过滤器
+
+  ```javascript
+  selection.filer(function (d, i) {
+  	return d > 20
+  })
+  ```
+
+* **sort** 改变顺序
+
+  ```js
+  selection.sort(function (a, b) {
+    return b - a // 递减排序
+  })
+  ```
+
+* **each** 对各元素分别处理
+
+  ```js
+  var persons = [
+    {id: 1, name: 'zhang san'},
+    {id: 2, name: 'li si'}
+  ]
+  
+  var p = d3.select('body').selectAll('p')
+  p.data(persons).each(function (d, i) {
+    d.age = 20
+  }).text(function (d, i) {
+    return d.id + ' ' + d.name + ' ' + d.age
+  })
+  ```
+
+* **call** 允许将选择集自身作为参数， 传递给某一个函数
+
+  ```js
+  function myfun (selection) {
+    selection.attr('name', 'value')
+  }
+  
+  d3.selectAll('div').call(myfun)
+  // 等同
+  myfun(d3.selectAll('div'))
+  ```
+
+
+
+##### 数组的处理
