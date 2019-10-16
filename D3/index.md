@@ -307,3 +307,80 @@ p.data(persons, function (d) {
 
 
 ##### 数组的处理
+
+* **排序**
+
+  * d3.**ascending**(a, b)： 升序， sort的默认函数
+
+    ```js
+    var numbers = [54, 23, 12, 19, 76]
+    numbers.sort(d3.ascending)
+    console.log(numbers) // [12, 19, 23, 54, 76]
+    ```
+
+  * d3.**descending**(a, b)：降序
+
+* **求值**
+
+  * d3.**min**(array [, accessor])：返回最小值 accessor 是在求值前数据处理函数
+
+  * d3.**max**(array [, accessor])：返回最大值
+
+  * d3.**extend**(array [, accessor])：返回最小和最大值的数组
+
+  * d3.**sum**(array [, accessor])：返回数组的总和，数组为空，返回0
+
+  * d3.**mean**(array [, accessor])：返回数组的平均值，数组为空，返回undefined，长度是有效长度（去除undefined等的数组长度）
+
+  * d3.**median**(array [, accessor])：返回数组的中间值，数组为空，返回undefined
+
+  * d3.**quantile**(numbers, p)：返回p分位点的值，p的范围为[0, 1]。数组需先递增排序
+
+    ```js
+    // quantile的应用
+    var numbers = [3, 1, 10]
+    numbers.sort(d3.ascending)
+    d3.quantile(numbers, 0) // 1
+    d3.quantile(numbers, 0.25) // 2
+    d3.quantile(numbers, 0.5) // 3
+    d3.quantile(numbers, 0.75) // 6.5
+    d3.quantile(numbers, 0.9) // 8.59999999
+    d3.quantile(numbers, 1.0) // 10
+    
+    // median是将数组中的无效值去掉后（undefined，NaN）去掉之后，在找到quantile中0.5分位的值
+    var numbers1 = [3, 1, 7, undefined, 9, NaN]
+    d3.median(numbers1) // 5
+    var numbers2 = [3, 1, 7, undefined, 9, 10, NaN]
+    d3.median(numbers2) // 7
+    ```
+
+  * d3.**variance**(array [, accessor])：求方差
+
+  * d3.**deviation**(array [, accessor])：求标准差
+
+  * d3.**bisectLeft**(array, findValue)：获取某 数组项 左边的位置
+
+  * d3.**bisect**(array, findValue)：获取某 数组项 右边的位置
+
+  * d3.**bisectRight**(array, findValue)：获取某 数组项 右边的位置，和bisect一致。上述三个主要配合splice使用
+
+* **操作**
+
+  * d3.**shuffle**(array [, lo [,hi]])：随机排列数组
+
+  * d3.**merge**(arrays)：合并两个数组
+
+    ```js
+    d3.merge([[1], [2, 3]]) // [1, 2, 3]
+    ```
+
+  * d3.pairs(array)：返回邻接的数组对（原数组不变）
+
+    ```js
+    var colors = ['red', 'blue', 'green']
+    var pairs = d3.pairs(colors)
+    
+    console.log(pairs) // [['red', 'blue'], ['blue', 'green']]
+    ```
+
+    
