@@ -374,13 +374,180 @@ p.data(persons, function (d) {
     d3.merge([[1], [2, 3]]) // [1, 2, 3]
     ```
 
-  * d3.pairs(array)：返回邻接的数组对（原数组不变）
+  * d3.**pairs**(array)：返回邻接的数组对（原数组不变）
 
     ```js
     var colors = ['red', 'blue', 'green']
     var pairs = d3.pairs(colors)
     
     console.log(pairs) // [['red', 'blue'], ['blue', 'green']]
+    ```
+
+  * d3.**range**([start, ] stop [, step])：返回等差数列
+
+    ```js
+    // start为0， stop为10， step为1
+    var a = d3.range(10)
+    // 输出 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    console.log(a)
+    
+    // start为2， stop为10， step为1
+    var b = d3.range(2, 10)
+    // 输出 [2, 3, 4, 5, 6, 7, 8, 9]
+    console.log(b)
+    
+    // start为2， stop为10， step为2
+    var c = d3.range(2, 10, 2)
+    // 输出 [2, 4, 6, 8]
+    console.log(c)
+    ```
+
+  * d3.**permute**(array, indexes)：根据指定的索引号数组返回排列后的数组（原数组不变）
+
+    ```js
+    var animals = ['cat', 'dog', 'bird']
+    var newAnimals = d3.permute(animals, [2, 1, 0])
+    // 输出['bird', 'dog', 'cat']
+    console.log(newAnimals)
+    ```
+
+  * ```js
+    var zip = d3.zip([1000, 1001, 1002], ['zhangsan', 'lisi', 'wangwu'], [true, false, true])
+    // 输出为 [[1000, 'zhangsan', true], [1001, 'lisi', false], [1002, 'wangwu', true]]
+    
+    // 求内积
+    var a = [10, 20, 5]
+    var b = [-5, 10, 3]
+    var ab = d3.sum(d3.zip(a, b), function (d) {
+      return d[0] * d[1]
+    })
+    console.log(ab) // 165
+    ```
+
+  * d3.**transpose**(matrix)：求转置矩阵
+
+    ```js
+    var a = [ [1, 2, 3], [4, 5, 6] ]
+    var t = d3.transpose(a)
+    // 输出 [[1, 4], [2, 5], [3, 6]]
+    console.log(t)
+    ```
+
+* **映射 Map**
+
+  d3.**map**([object] [, key]) 能够构建映射，包括以下方法
+
+  * map.has(key)：判断key存在，返回boolean
+
+  * map.get(key)：取key的值，无则返回undefined
+
+  * map.set(key, value)：设定key的值
+
+  * map.remove(key)：删除key和值，返回true。不存在返回false
+
+  * map.keys()：以数组形式返回该map所有的key
+
+  * map.values()：以数组形式返回该map所有的value
+
+  * map.entries()：以数组形式返回该map所有的key和value
+
+  * map.forEach(function)：同数组
+
+  * map.empty()：判断该映射为空
+
+  * map.size()：返回映射大小
+
+    ```js
+    var dataset = [
+    	{id: 1001, color: 'red'},
+      {id: 1002, color: 'blue'},
+      {id: 1003, color: 'green'},
+    ]
+    
+    // 以id作为key
+    var map = d3.map(dataset, function (d) {return d.id})
+    map.get(1001) / /{id: 1001, color: 'red'}
+    ```
+
+* **集合 Set**
+
+  d3.**set**([array])，相关方法如下
+
+  * set.has(value)：判断value是否存在于set中
+  * set.add(value)：添加value，返回value。如果有，则不添加
+  * set.remove(value)：删除值，返回true。不存在返回false
+  * set.values()：以数组形式返回该集合中所有的元素
+  * set.forEach(function)：对每一个元素都调用function函数，函数里传入一个参数，即该元素的值
+  * set.empty()：判断该集合是否为空
+  * set.size()：返回集合大小
+
+* **嵌套结构 Nest**
+
+  d3.**nest**() 嵌套结构能使用键**key**对数组中大量对象进行分类，多个键一层套一层
+
+  * nest.key(function)：指定嵌套结构的键
+
+  * nest.entries(array)：指定数组array将被用于构建嵌套结构
+
+    ```js
+    var persons = [
+      {id: 100, name: 'zhang 1', year: 1989, hometown: 'beijing'},
+      {id: 101, name: 'zhang 2', year: 1987, hometown: 'beijing'},
+      {id: 102, name: 'zhang 3', year: 1982, hometown: 'shanghai'},
+      {id: 103, name: 'zhang 4', year: 1981, hometown: 'xian'},
+      {id: 104, name: 'zhang 5', year: 1989, hometown: 'guangzhou'},
+      {id: 105, name: 'zhang 6', year: 1989, hometown: 'beijing'}
+    ]
+    
+    var nest = d3.nest()
+    	// year作为第一个键
+    	.key(function (d) {return d.year})
+    	// hometown作为第二个键
+    	.key(function (d) {return d.hometown})
+      // 指定将应用嵌套结构的数组为persons
+    	.entries(persons)
+    ```
+
+    
+
+  * nest.sortKeys(comparator)：按照键对嵌套结构进行排序，接在nest.key()后使用
+
+    ```js
+    d3.nest()
+    	.key(function (d) {return d.year})
+    	.sortKeys(d3.descending)
+    	.key() // 其他键的定义
+    ```
+
+  * nest.sortValues(comparator)：按照值对应嵌套结构排序
+
+  * nest.rollup(function)：对每一组叶子节点调用指定的函数function，该函数含有一个参数values，是当前叶子节点的数组
+
+  * nest.map(array [, mapType])：以映射的形式输出数组，最外层是一个对象
+
+    ```js
+    var person = [
+    	{sex: '男', values: 3},
+      {sex: '男', values: 7},
+      {sex: '男', values: 10},
+      {sex: '女', values: 2},
+    ]
+    
+    var nest = d3.nest()
+    	.key(function (d) {return d.sex})
+    	.map(person, d3.map)
+    
+    // 输出
+    {
+      '女': [
+        {sex: '女'， values: 2}
+      ],
+      '男': [
+        {sex: '男', values: 3},
+      	{sex: '男', values: 7},
+      	{sex: '男', values: 10}
+      ]
+    }
     ```
 
     
