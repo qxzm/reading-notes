@@ -550,4 +550,9 @@ p.data(persons, function (d) {
     }
     ```
 
-    
+
+
+
+
+### 三、比例尺和坐标轴
+
