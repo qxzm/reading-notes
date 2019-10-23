@@ -556,3 +556,100 @@ p.data(persons, function (d) {
 
 ### 三、比例尺和坐标轴
 
+##### 定量比例尺
+
+> 定义域连续的情况为定量比例尺
+
+* **线性比例尺 d3.scale.linear()**
+
+  * **linear**(x)：输入一个在定义域内的值x， 返回值域内对应的值
+
+  * linear.**invert**(y)：输入一个在值域内的值，返回定义域内对应的值
+
+  * linear.**domain**([numbers])：设定或获取定义域
+
+  * linear.**range**([values])：设定或获取值域（**domain和range最少放入两个数，可以超过，但个数需相等**）
+
+  * linear.**rangeRound**([values])：代替range()使用的话，比例尺的输出值会进行四舍五入的运算，结果为整数
+
+  * linear.**clamp**([boolean])：默认设置为false，当该比例尺接受一个超出定义域范围内的值时，依然能够按照同样的计算方法计算得到一个值，这个值可能是超出值域范围的。如果设置为true，则任何超出值域范围的值，都会被收缩到值域范围内
+
+  * linear.**nice**([count])：将定义域的范围扩展成比较理想的形式。例如，定义域为[0.500000543,  0.8999128199]这样的定义域，则自动将其变为[0, 0.9],定义域为[0.500000543,  69.999128199]这样的定义域，则自动将其变为[0, 70]
+
+  * linear.**ticks**([count])：设定或获取定义域内具有代表性的值的数目。count默认为10，如果定义域为[0, 70]，则该函数返回[0, 10, 20, 30, 40, 50, 60, 70]。如果count设置成3，则返回[0, 20, 40, 60]，该方法主要用于选取坐标轴刻度。
+
+  * linear.**tickFormat**(count [, format])：用于设置定义域内具有代表性的值的表现形式，如显示到小数点后两位，使用百分比的形式显示，主要用于坐标轴上。
+
+    ```js
+    var linear = d3.scale.linear()
+    	.domain([0, 20]) // 定义域
+    	.range([0, 100]) // 值域
+    
+    console.log(linear(10)) // 50
+    console.log(linear(30)) // 150
+    console.log(linear.invert(80)) // 16
+    
+    // 不超过范围
+    linear.clamp(true)
+    console.log(linear(30)) // 100
+    
+    
+    // 输出整数数值
+    linear.rangeRound([0, 100])
+    console.log(linear(13.33)) // 67
+    
+    // ticks
+    var linear = d3.scale.linear()
+    	.domain([-20, 20])
+    	.range([0, 100])
+    
+    var ticks = linear.ticks(5)
+    console.log(ticks) // [-20, -10, 0, 10, 20]
+    var tickFormat = linear.tickFormat(5, '+') // 常用格式还有 % $ 等
+    for (var i = 0; i < ticks.length; i++) {
+      ticks[i] = tickFormat(ticks[i])
+    }
+    console.log(ticks) // ['-20', '-10', '+0', '+10', '+20']
+    
+    ```
+
+* **指数和对数比例尺 d3.scale.pow()**
+
+  * 指数中 domain, range, rangeRound, clamp, nice, ticks, tickFormat和线性一致
+
+  * pow.**exponent**(number)：指数比例尺， 用于指定指数
+
+  * pow.**base**()：对数比例尺，用于指定底数
+
+    ```js
+    // 设定指数比例尺的指数为3
+    var pow = d3.scale.pow().exponent(3)
+    console.log(pow(2)) // 8
+    console.log(pow(3)) // 27
+    
+    // 设定指数比例尺的指数为0.5
+    pow.exponent(0.5)
+    console.log(pow(2)) // 1.414
+    console.log(pow(3)) // 1.732
+    ```
+
+* **量子比例尺 d3.scale.quantize()**
+
+  > 其定义域是连续的，值域是离散的，值域平分定义域
+
+  ```js
+  var quantize = d3.scale.quantize()
+  	.domain([0, 10])
+  	.range(['red', 'green', 'blue', 'yellow', 'black'])
+  
+  // [0, 2)对应red， [2, 4)对应green，以此类推
+  console.log(quantize(1)) // red
+  console.log(quantize(3)) // green
+  console.log(quantize(5.999)) // blue
+  console.log(quantize(6)) // yellow
+  ```
+
+* **分位比例尺 d3.scale.quantile()**
+
+  
+
