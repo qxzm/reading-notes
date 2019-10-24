@@ -635,7 +635,7 @@ p.data(persons, function (d) {
 
 * **量子比例尺 d3.scale.quantize()**
 
-  > 其定义域是连续的，值域是离散的，值域平分定义域
+  > 其定义域是连续的，值域是离散的。值域平分定义域
 
   ```js
   var quantize = d3.scale.quantize()
@@ -651,5 +651,96 @@ p.data(persons, function (d) {
 
 * **分位比例尺 d3.scale.quantile()**
 
+  量子比例尺的分段值只与定义域的起始值和结束值有关，其中间有多少其他数值都没有影响。
+
+  分位比例尺的分段值与定义域中存在的数值都有关。
+
+  ```js
+  // 只有两个值，从定义域的2和4的平均数3分开，[0, 3)是1， [3, 10)是100
+  var quantile = d3.scale.quantile()
+  	.domain([0, 2, 4, 10])
+  	.range([1, 100])
   
+  // 对比quantize
+  var quantize = d3.scale.quantize()
+  	.domain([0, 2, 4, 10])
+  	.range([1, 100])
+  
+  console.log(quantize(3)) // 1
+  console.log(quantile(3)) // 100
+  ```
+
+  * quantile.**quantiles**()：查询分位比例尺的分段值
+
+* **阈值比例尺 d3.scale.threshold()**
+
+  阈值又叫临界值，是指一个效应能够产生的最低值或最高值。
+
+  以下代码定义了三个阈值，将空间分位四段：负无穷到10，10到20，20到30，30到正无穷
+
+  ```js
+  var threshold = d3.scale.threshold()
+  	.domain([10, 20, 30])
+  	.range(['red', 'green', 'blue', 'black'])
+  
+  console.log(threshold(5)) // red
+  console.log(threshold(15)) // green
+  console.log(threshold(25)) // blue
+  console.log(threshold(35)) // black
+  ```
+
+  * threshold.**invertEvent**(value)：通过值域获取定义域
+
+
+
+##### 序数比例尺
+
+> 序数比例尺的定义域和值域都是离散的
+
+* d3.scale.**ordinal**()：构建一个序数比例尺
+
+* **ordinal**(x)：输入定义域内一个离散值，返回值域内一个离散值
+
+* ordinal.**domain**([values])：设定或获取定义域
+
+* ordinal.**range**([values])：设定或获取值域
+
+* ordinal.**rangePoints**(interval [, padding])：代替range()设定值域，接受一个连续的区间，然后根据定义域中离散值的数量将其分段，分段值即作为值域的离散值（**interval是区间， padding是边界部分留下的空白**）
+
+* ordinal.**rangeRoundPoints**(interval [, padding])：和rangePoints()一样，但是会将结果取整
+
+* ordinal.**rangeBands**(interval [, padding [, outerPadding]])：代替range()设定值域，与rangePoints()一样，也是接受一个连续的区间，然后根据定义域中离散值的数量将其分段，但是其分段方法是不同的。
+
+* ordinal.**rangeRoundBands**(interval [, padding [, outerPadding]])：和rangeBands()，但是会将结果取整。
+
+* ordinal.**rangeBand**()：返回使用rangeBand()设定后每一段的宽度
+
+* ordinal.**rangeExtend**()：返回一个数组，数组里存有值域的最大值和最小值
+
+  ```js
+  var ordinal = d3.scale.ordinal()
+  	.domain([1, 2, 3, 4, 5])
+  	.range(10, 20, 30, 40, 50)
+  
+  console.log(ordinal(1)) // 10
+  console.log(ordinal(3)) // 30
+  console.log(ordinal(5)) // 50
+  console.log(ordinal(8)) // 10 输入值不在定义域中
+  
+  //
+  var ordinal = d3.scale.ordinal()
+  	.domain([1, 2, 3, 4, 5])
+  	.rangePoints([0, 100])
+  
+  console.log(ordinal.range()) // [0, 25, 50, 75, 100]
+  console.log(ordinal(1)) // 0
+  console.log(ordinal(3)) // 50
+  console.log(ordinal(5)) // 100
+  
+  // 
+  ordinal.rangePoints([0, 100], 5)
+  console.log(ordinal.range()) // [27.77777, 38.88888, 50, 61.11111, 72.22222]
+  ```
+
+  ​	
 
