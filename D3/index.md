@@ -705,11 +705,11 @@ p.data(persons, function (d) {
 
 * ordinal.**range**([values])：设定或获取值域
 
-* ordinal.**rangePoints**(interval [, padding])：代替range()设定值域，接受一个连续的区间，然后根据定义域中离散值的数量将其分段，分段值即作为值域的离散值（**interval是区间， padding是边界部分留下的空白**）
+* ordinal.**rangePoints**(interval [, padding])：代替range()设定值域，接受一个连续的区间，然后根据定义域中离散值的数量将其分段，分段值即作为值域的离散值**（interval是区间， padding是边界部分留下的空白，值指的是几倍的step宽度）**
 
 * ordinal.**rangeRoundPoints**(interval [, padding])：和rangePoints()一样，但是会将结果取整
 
-* ordinal.**rangeBands**(interval [, padding [, outerPadding]])：代替range()设定值域，与rangePoints()一样，也是接受一个连续的区间，然后根据定义域中离散值的数量将其分段，但是其分段方法是不同的。
+* ordinal.**rangeBands**(interval [, padding [, outerPadding]])：代替range()设定值域，与rangePoints()一样，也是接受一个连续的区间，然后根据定义域中离散值的数量将其分段，但是其分段方法是不同的。**（interval是区间， padding是内部的空白，outerPadding是外部的空白）**
 
 * ordinal.**rangeRoundBands**(interval [, padding [, outerPadding]])：和rangeBands()，但是会将结果取整。
 
@@ -717,10 +717,12 @@ p.data(persons, function (d) {
 
 * ordinal.**rangeExtend**()：返回一个数组，数组里存有值域的最大值和最小值
 
+  ![序数比例尺参数](img/d3-序数比例尺参数.png)
+
   ```js
   var ordinal = d3.scale.ordinal()
   	.domain([1, 2, 3, 4, 5])
-  	.range(10, 20, 30, 40, 50)
+  	.range([10, 20, 30, 40, 50])
   
   console.log(ordinal(1)) // 10
   console.log(ordinal(3)) // 30
@@ -737,10 +739,46 @@ p.data(persons, function (d) {
   console.log(ordinal(3)) // 50
   console.log(ordinal(5)) // 100
   
-  // 
-  ordinal.rangePoints([0, 100], 5)
+  // padding的5是指5倍step的距离，平分在两侧
+  ordinal.rangePoints([0, 100], 5) // padding为5则一共有9个step
   console.log(ordinal.range()) // [27.77777, 38.88888, 50, 61.11111, 72.22222]
+  
+  // rangeRoundPoints则取整
+  ordinal.rangeRoundPoints([0, 100], 5)
+  console.log(ordinal.range()) // [28, 39, 50, 61, 72]
   ```
 
-  ​	
+  ![序数比例尺参数2](img/d3-序数比例尺参数2.png)	
+
+  ```js
+  // padding和outerPadding默认为0，计算可得，rangeBand为20， 值域有五个离散的值，分别是没一个rangeBand区域的起点
+  var bands = d3.scale.ordinal()
+  	.domain([1, 2, 3, 4, 5])
+  	.rangeBands([0, 100])
+  
+  console.log(bands.range()) // [0, 20, 40, 60, 80]
+  console.log(bands.rangeBand()) // 20
+  ```
+
+* 四种颜色的序数比例尺
+
+  * d3.scale.**category10**()：10种颜色
+  * d3.scale.**category20**()：20种颜色
+  * d3.scale.**category20b**()：20种颜色
+  * d3.scale.**category20c**()：20种颜色
+
+
+
+##### 坐标轴 Axis
+
+* d3.svg.**axis**()：创建一个默认的新坐标轴 (v5 d3.axisBottom())
+* **axis**(selection)：将此坐标轴应用到指定的选择集上，该选择集需要包含有**svg或g**元素
+* axis.**scale**([scale])：设定或获取坐标轴的比例尺
+* axis.**orient**([orientation])：设定或获取坐标轴的方向，有四个值，top,bottom,left,right。top表示水平坐标轴的刻度在直线下方
+* axis.**ticks**([argument...])：设定或者获取坐标轴的分隔数，默认为10
+* axis.**tickValues**([values])：设定或获取坐标轴的指定刻度
+* axis.**tickSize**([inner, outer])：设定或获取坐标轴的内外刻度的长度，默认都是6(v5 只设置一个)
+* axis.**innerTickSize**([size])：设定或获取坐标轴的内刻度的长度，内刻度指不是两端的刻度
+* axis.**outerTickSize**([size])：设定或获取坐标轴的外刻度的长度，外刻度指两端的刻度
+* axis.**tickFormat**([format])：设定或获取刻度的格式
 
