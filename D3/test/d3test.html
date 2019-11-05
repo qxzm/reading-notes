@@ -298,7 +298,7 @@
             .domain(d3.range(dataset.length))
             .rangeRound([0, xAxisWidth], 0.2)
         var yScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset.length)])
+            .domain([0, d3.max(dataset)])
             .range([0, yAxisWidth])
 
         var padding = {top: 20, right: 20, bottom: 20, left: 20}
@@ -317,13 +317,13 @@
                 .attr('x', function (d, i) {return padding.left + xScale(i)})
                 .attr('y', function (d) {return height - padding.bottom - yScale(d)})
                 .attr('width', rectWidth)
-                .attr('height', function (d) {return d})
+                .attr('height', function (d) {return yScale(d)})
             enterRect.append('rect')
                 .attr('fill', 'steelblue')
                 .attr('x', function (d, i) {return padding.left + xScale(i)})
                 .attr('y', function (d) {return height - padding.bottom - yScale(d)})
                 .attr('width', rectWidth)
-                .attr('height', function (d) {return d})
+                .attr('height', function (d) {return yScale(d)})
             exitRect.remove()
 
             var updateText = svg.selectAll('text').data(dataset)
@@ -352,7 +352,7 @@
             // 坐标轴
             var xAxis = d3.axisBottom()
                 .scale(xScale)
-            yScale.range([0, yAxisWidth])
+            yScale.range([yAxisWidth, 0])
             var yAxis = d3.axisLeft()
                 .scale(yScale)
 
@@ -373,6 +373,92 @@
             dataset.push(Math.floor(Math.random() * 100))
             draw()
         }
+    </script>
+
+    <script type="text/javascript">
+        // 线
+        var lines = [80, 120, 160, 200, 240, 280]
+        var linePath = d3.line()
+            .x(function (d) {return d})
+            .y(function (d, i) { return i % 2 == 0 ? 40 : 120 })
+            // 插值模式
+            .curve(d3.curveBasisClosed)
+        var svg = d3.select('body').append('svg')
+        svg.append('path')
+            .attr('d', linePath(lines))
+            .attr('stroke', 'black')
+            .attr('stroke-width', '3px')
+            .attr('fill', 'none')
+    </script>
+    <script type="text/javascript">
+        var width = 500
+        var height = 300
+        // 区域
+        var dataset = [80, 120, 130, 70, 60, 90]
+        var area = d3.area()
+            .x(function (d, i) {return 50 + i * 80})
+            .y0(function (d, i) {return height / 2})
+            .y1(function (d, i) {return height / 2 - d})
+            .curve(d3.curveBasis)
+        var svg = d3.select('body').append('svg').attr('width', width).attr('height', height)
+        svg.append('path')
+            .attr('d', area(dataset))
+            .attr('stroke', 'black')
+            .attr('stroke-width', '3px')
+            .attr('fill', 'yellow')
+    </script>
+    <script type="text/javascript">
+        // 弧
+        var dataset = {startAngle: 0, endAngle: Math.PI * 0.75, innerRadius: 50, outerRadius: 100}
+        var arc = d3.arc()
+            // .innerRadius(50)
+            // .outerRadius(100)
+        var arc1 = d3.arc()
+            .innerRadius(50)
+            .outerRadius(100)
+            .startAngle(0)
+            .endAngle(Math.PI * 0.75)
+        var width = 300
+        var height = 300
+        var svg = d3.select('body').append('svg').attr('width', width).attr('height', height)
+        svg.append('path')
+            // .attr('d', arc(dataset))
+            .attr('d', arc1())
+            .attr('transform', 'translate(150, 150)')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '3px')
+            .attr('fill', 'yellow')
+    </script>
+    <script type="text/javascript">
+        var n = 7 * 4
+        var dataset = []
+        var symbols = d3.symbols
+        for(var i = 0; i<n; i++) {
+            dataset.push({
+                size: Math.random() * 30 + 200,
+                type: symbols[ i % 7 ]
+            })
+        }
+
+        var symbol = d3.symbol()
+            .size(function (d) {return d.size})
+            .type(function (d) {return d.type})
+        var width = 300
+        var height = 300
+        var svg = d3.select('body').append('svg').attr('width', width).attr('height', height)
+        svg.selectAll('.abcd')
+            .data(dataset)
+            .enter()
+            .append('path')
+            .attr('d', function (d) {return symbol(d)})
+            .attr('transform', function (d, i) {
+                var x = 100 + i%7 * 20
+                var y = 100 + Math.floor(i/7) * 20
+                return 'translate(' + x + ',' + y + ')'
+            })
+            // d3.schemeCategory20 undefined
+            .attr('fill', function(d, i) {return 'black'})
+
     </script>
 </body>
 </html>

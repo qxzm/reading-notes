@@ -782,3 +782,111 @@ p.data(persons, function (d) {
 * axis.**outerTickSize**([size])：设定或获取坐标轴的外刻度的长度，外刻度指两端的刻度
 * axis.**tickFormat**([format])：设定或获取刻度的格式
 
+
+
+
+
+### 四、绘制
+
+> d3本身没有作图的功能，只能为我们计算出作图所需的数据，而svg则是最适合d3的作图工具
+
+##### 颜色
+
+* **RGB**
+
+  * d3.**rgb**(r, g, b)：以3个色值创建
+
+  * d3.**rgb**(color)：以字符串创建（如 rgb(255, 255, 255), hsl(120, 0.5, 0.5), #fffeee, red 等）
+
+  * rgb.**brighter**([k])：颜色变得更明亮，值 * 0.7 ^ -k
+
+  * rgb.**darker**([k])：颜色变得更暗，值 * 0.7 ^ k，上述两个返回新的颜色对象，不会改变原来的对象
+
+  * rgb.**hsl**()：返回颜色对应的hsl值
+
+  * rgb.**toString**()：以字符串形式返回该颜色值
+
+    ```js
+    var color1 = d3.rgb(40, 80, 0)
+    var color2 = d3.rgb('red')
+    var color3 = d3.rgb('rgb(0, 255, 255)')
+    
+    console.log(color1.brighter(2)) // 81,163,0
+    console.log(color2.darker(2)) // 124,0,0
+    console.log(color3.hsl()) // 180,1,0.5
+    ```
+
+* **HSL**
+
+  方法同rgb，只是颜色通道的意义不一样，h代表色相（0-360，0红，120绿，240蓝色），饱和度0-1，明度0-1
+
+* **插值**
+
+  d3.interpolate(rgb, rgb)：返回一个对应的函数，来计算介于两个颜色之间的颜色，如rgb,hsl都行
+
+
+
+##### 线段生成器 line
+
+* d3.svg.**line**()：创建线段生成器
+* **line**(data)：使用线段生成器绘制data数据
+* line.**x**([x])：设置或获取线段x坐标的访问器，即使用什么数据作为线段的x坐标
+* line.**y**([x])：设置或获取线段y坐标的访问器
+* line.**interpolate**([interpolate])：设置或获取线段的插值模式，共13种(v5 curve)
+* line.**tension**([tension])：设置或获取张力系数，当插值模式为cardinal，cardinal-open，cardinal-closed的时候有效
+* line.**defined**([defined])：设置或获取一个访问器，用于确认线段是否存在，只有判断为存在的数据才会被绘制
+
+
+
+##### 区域生成器 area
+
+与线段生成器类似，访问器有x,x0,x1,y,y0,y1六个
+
+![](img/d3-区域生成器参数.png)
+
+##### 弧生成器 arc
+
+* **innerRadius**()
+* **outerRadius**()：外半径
+* **statrAngle**()
+* **endAngle**()：单位是弧度，190度用3.1415926（Math.PI）
+* arc.**centroid**(d)：弧的中心位置，返回的是二维坐标
+
+![](img/d3-弧生成器参数.png)
+
+
+
+##### 符号生成器 symbol
+
+* d3.svg.**symbol**()：创建一个符号生成器
+* **symbol**(datum [, index])：返回指定数据 datum 的路径字符串
+* symbol.**type**([type])：设定或获取符号的类型（v5）
+  * [d3.symbols](https://github.com/d3/d3-shape#symbols) - 符号类型数组。
+  * [d3.symbolCircle](https://github.com/d3/d3-shape#symbolCircle) - 圆形。
+  * [d3.symbolCross](https://github.com/d3/d3-shape#symbolCross) - 十字。
+  * [d3.symbolDiamond](https://github.com/d3/d3-shape#symbolDiamond) - 菱形。
+  * [d3.symbolSquare](https://github.com/d3/d3-shape#symbolSquare) - 方形。
+  * [d3.symbolStar](https://github.com/d3/d3-shape#symbolStar) - 五角星。
+  * [d3.symbolTriangle](https://github.com/d3/d3-shape#symbolTriangle) - 上三角。
+  * [d3.symbolWye](https://github.com/d3/d3-shape#symbolWye) - Y形。
+* symbol.**size**([size])：设定或获取符号的大小，单位是像素的平方，默认64
+
+
+
+##### 弦生成器 chord (v5 不存在)
+
+* d3.svg.**chord**()：生成弦生成器
+* chord.**source**()：起始弧
+* chord.**target**()：终止弧
+* chord.**radius**()：半径
+* chord.**startAngle**()：起始角度
+* chord.**endAngle**()：终止角度
+
+
+
+
+
+### 五、动画
+
+
+
