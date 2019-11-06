@@ -888,5 +888,72 @@ p.data(persons, function (d) {
 
 ### 五、动画
 
+##### 过渡
 
+过渡效果的起始状态和目标状态都很明确，指定之后元素会从起始状态缓缓变为目标状态，时间是确定的。
 
+* d3.**transition**([selection] , [name])：创建一个过渡对象，参数是选择集。由于每个选择集中都有transition方法，可用d3.select('rect').transition()的方式来创建过渡，一般不直接使用此方法。
+
+* transition.**delay**([delay])：设定延迟的时间
+
+* transition.**duration**([duration])：设定过渡的持续时间（不包含延迟的时间）
+
+* transition.**ease**(value [, arguments])：设定过渡样式，例如线性过渡、在目标处弹跳几次等方式。
+
+  ```js
+  var width = 300
+  var height = 300
+  var svg = d3.select('body').append('svg').attr('width', width).attr('height', height)
+  var rect = svg.append('rect')
+    .attr('fill', 'steelblue')
+    .attr('x', 10)
+    .attr('y', 10)
+    .attr('width', 100)
+    .attr('height', 30)
+    .transition()
+    .attr('width', 300)
+  
+  // 没使用transition之前返回的rect是一个选择集对象
+  console.log(rect) // 此时是一个过渡对象
+  ```
+
+* transition.**attr**(name, value)：将属性name过渡到目标值value，value可以是一个函数
+
+* transition.**attrTween**(name, tween)：将属性name使用插值函数tween()进行过渡，tween有三个参数d,i,a
+
+  * d：被绑定数据
+
+  * i：索引号
+
+  * a：属性的初始值
+
+    该函数返回的 function (t) {return xxx} 就是插值函数，参数t的范围是[0, 1]
+
+    ```js
+    var svg2 = d3.select('body').append('svg').attr('width', width).attr('height', height)
+    var rectIns2 = svg2.append('rect')
+    .attr('fill', 'steelblue')
+    .attr('x', 10)
+    .attr('y', 10)
+    .attr('width', 100)
+    .attr('height', 30)
+    rectIns2.transition()
+      .duration(2000)
+      .attrTween('width', function (d, i, a) {
+      return function(t) {
+        // d:undefined, i:0, a: [rect]对象
+        console.log(a[i].width) //?
+        return 100 + t * 300
+      }
+    })
+    ```
+
+* transition.**style**(name, value [, priority])：将css样式的name属性过渡到目标值value。priority是可选参数，表示css样式的优先级，只有null和important两个值。
+
+* transition.**styleTween**(name, tween [, priority])：类似attrTween
+
+* transition.**text**(value)：过渡开始时，把文本设置成value值
+
+* transition.**tween**(name, factory)
+
+* transition.**remove**()：过渡结束后，删除被选择的元素
