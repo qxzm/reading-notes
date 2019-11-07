@@ -957,3 +957,45 @@ p.data(persons, function (d) {
 * transition.**tween**(name, factory)
 
 * transition.**remove**()：过渡结束后，删除被选择的元素
+
+
+
+##### 子元素
+
+在使用selection.transition()的时候，过渡是针对选择集自身的元素来说的，选择集里的子元素不受影响。
+
+* transition.**select**(selector)：选择符合选择器的第一个子元素进行过渡
+
+* transition.**selectAll**(selector)：选择符合选择器的所有子元素进行过渡
+
+* transition.**filter**(selector)：过滤器，选择过渡对象的子元素
+
+* transition.**each**([type, ] listener)：type表示时间的类型，有start，end，interrupt三个值（v5不存在）。当对应事件发生时调用listener。type省略即和选择集的each一致
+
+  interrupt事件在 某过渡进行中，该元素又在别处被调用一个新的过渡，这时候就会发生打断事件
+
+* transition.**call**(function[, arguments...])：以过度对象本身为参数调用function
+
+
+
+##### 过渡样式
+
+* **linear**：线性地变化（v5  d3.easeLinear 以下类似）
+* **cubic**：默认的方式，逐渐加快速度
+* **elastic**：像弹簧一样接近终点
+* **back**：先往回缩一点，在冲到终点
+* **bounce**：在终点处弹跳几次
+* 上述加以下后缀可：
+  * **-in**：按正方向运动
+  * **-out**：按反向运动(其实是默认的)
+  * **-in-out**：前半段按正方向运动，后半段按反方向运动
+  * **-out-in**：前半段按反方向运动，后半段按正方向运动
+
+
+
+##### 定时器
+
+setTimeout和setInterval也可，或是使用d3.timer使用requestAnimationFrame实现
+
+**d3.timer**(fn, delay, delayStartTime)
+
