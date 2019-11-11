@@ -999,3 +999,129 @@ setTimeout和setInterval也可，或是使用d3.timer使用requestAnimationFrame
 
 **d3.timer**(fn, delay, delayStartTime)
 
+```js
+// 应用过渡
+var center = [
+  [0.5, 0.5],
+  [0.7, 0.8],
+  [0.4, 0.9],
+  [0.11, 0.32],
+  [0.88, 0.25],
+  [0.75, 0.12],
+  [0.5, 0.1],
+  [0.2, 0.3],
+  [0.4, 0.1],
+  [0.6, 0.7]
+]
+
+var svg = d3.select('body').append('svg').attr('width', 500).attr('height', 500)
+// d3.select('body')
+//     .append('button')
+//     .text('增加')
+//     .property('onclick', add)
+var padding = 30
+var xAxisWidth = 300
+var yAxisWidth = 300
+var xScale = d3.scaleLinear()
+.domain([0, 1])
+.range([0, xAxisWidth])
+var yScale = d3.scaleLinear()
+.domain([0, 1])
+.range([0, yAxisWidth])
+
+drawCircle()
+drawAxis()
+function drawCircle() {
+  var circleUpdate = svg.selectAll('circle').data(center)
+  var enter = circleUpdate.enter()
+  var exit = circleUpdate.exit()
+
+  circleUpdate.transition()
+    .duration(500)
+    .attr('cx', function (d) {
+    return padding + xScale(d[0])
+  })
+    .attr('cy', function (d) {
+    // 500 height
+    return 500 - padding - yScale(d[1])
+  })
+
+  enter.append('circle')
+    .attr('fill', 'black')
+    .attr('cx', padding)
+    .attr('cy', 500 - padding)
+    .attr('r', 7)
+    .transition()
+    .duration(500)
+    .attr('cx', function (d) {
+    return padding + xScale(d[0])
+  })
+    .attr('cy', function (d) {
+    return height - padding - yScale(d[1])
+  })
+
+  exit.transition()
+    .duration(500)
+    .attr('fill', 'white')
+    .remove()
+}
+
+function drawAxis() {
+  var xAxis = d3.axisBottom()
+  .scale(xScale)
+  .ticks(5)
+  yScale.range([yAxisWidth, 0])
+  var yAxis = d3.axisLeft()
+  .scale(yScale)
+  .ticks(5)
+
+  svg.append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(' + padding + ',' + (height - padding) + ')')
+    .call(xAxis)
+  svg.append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(' + padding + ',' + (height - padding - yAxisWidth) + ')')
+    .call(yAxis)
+  yScale.range([0, yAxisWidth])
+}
+
+function add () {
+  console.log('add')
+  center.push([Math.random(), Math.random()])
+  drawCircle()
+}
+```
+
+```js
+function getTimeString () {
+  var time = new Date()
+  var hours = time.getHours()
+  var minutes = time.getMinutes()
+  var seconds = time.getSeconds()
+
+  hours = hours < 10 ? '0' + hours : hours
+  minutes = minutes < 10 ? '0' + minutes : minutes
+  seconds = seconds < 10 ? '0' + seconds : seconds
+  return  hours + ':' + minutes + ':' + seconds
+}
+
+var svg = d3.select('body').append('svg').attr('width', 300).attr('height', 300)
+var timeText = svg.append('text')
+.attr('x', 100)
+.attr('y', 100)
+.attr('class', 'time')
+.text(getTimeString())
+
+setInterval(updateTime, 1000)
+function updateTime () {
+  timeText.text(getTimeString())
+}
+```
+
+
+
+
+
+### 六、交互
+

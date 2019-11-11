@@ -625,5 +625,147 @@
             drawCircle()
         }
     </script>
+
+    <style type="text/css">
+        .time {
+            font-family: Cursive;
+            font-size: 40px;
+            stroke: black;
+            stroke-width: 2;
+        }
+    </style>
+    <script type="text/javascript">
+        // 时钟
+        function getTimeString () {
+            var time = new Date()
+            var hours = time.getHours()
+            var minutes = time.getMinutes()
+            var seconds = time.getSeconds()
+
+            hours = hours < 10 ? '0' + hours : hours
+            minutes = minutes < 10 ? '0' + minutes : minutes
+            seconds = seconds < 10 ? '0' + seconds : seconds
+            return  hours + ':' + minutes + ':' + seconds
+        }
+
+        var svg = d3.select('body').append('svg').attr('width', 300).attr('height', 300)
+        var timeText = svg.append('text')
+            .attr('x', 100)
+            .attr('y', 100)
+            .attr('class', 'time')
+            .text(getTimeString())
+
+        setInterval(updateTime, 1000)
+        function updateTime () {
+            timeText.text(getTimeString())
+        }
+    </script>
+
+    <script type="text/javascript">
+        var chars = ['A', 'S', 'D', 'F', 'g']
+        var svg = d3.select('body').append('svg').attr('width', 300).attr('height', 300)
+        var rects = svg.selectAll('rect')
+            .data(chars)
+            .enter()
+            .append('rect')
+            .attr('x', function (d, i) {return 10 + i * 60})
+            .attr('y', 150)
+            .attr('width', 55)
+            .attr('height', 55)
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('fill', 'black')
+        //
+        var texts = svg.selectAll('text')
+            .data(chars)
+            .enter()
+            .append('text')
+            .attr('x', function (d, i) {return 10 + i * 60})
+            .attr('y', 150)
+            .attr('dx', 10)
+            .attr('dy', 25)
+            .attr('fill', 'white')
+            .attr('font-size', 24)
+            .text(function (d) {return d})
+        d3.select('body')
+            .on('keydown', function () {
+                rects.attr('fill', function (d) {
+                    if (d == String.fromCharCode(d3.event.keyCode)) {
+                        return 'yellow'
+                    } else {
+                        return 'black'
+                    }
+                })
+            })
+            .on('keyup', function () {
+                rects.attr('fill', 'black')
+            })
+    </script>
+
+    <script type="text/javascript">
+        var svg = d3.select('body').append('svg').attr('width', 300).attr('height', 300)
+        svg.append('rect')
+            .attr('x', 200)
+            .attr('y', 200)
+            .attr('width', 100)
+            .attr('height', 100)
+            .on('click', function () {
+                console.log(d3.mouse(this))
+                console.log(svg)
+            })
+    </script>
+    <script type="text/javascript">
+        var circles = [
+            {cx: 150, cy: 200, r: 30},
+            {cx: 250, cy: 250, r: 30}
+        ]
+        var drag = d3.drag()
+            .on('start', function (d) {
+                console.log('拖拽开始')
+            })
+            .on('end', function (d) {
+                console.log('拖拽结束')
+            })
+            .on('drag', function (d) {
+                d3.select(this)
+                    .attr('cx', d.cx = d3.event.x)
+                    .attr('cy', d.cy = d3.event.y)
+            })
+
+        var svg = d3.select('body').append('svg').attr('width', 300).attr('height', 300)
+        svg.selectAll('circle')
+            .data(circles)
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) {return d.cx})
+            .attr('cy', function (d) {return d.cy})
+            .attr('r', function (d) {return d.r})
+            .attr('fill', 'black')
+            .call(drag)
+    </script>
+    <script type="text/javascript">
+        var circles = [
+            {cx: 150, cy: 200, r: 30},
+            {cx: 220, cy: 200, r: 30},
+            {cx: 150, cy: 270, r: 30},
+            {cx: 220, cy: 270, r: 30}
+        ]
+
+        var svg = d3.select('body').append('svg').attr('width', 300).attr('height', 300)
+        var zoom = d3.zoom()
+            .scaleExtent([1, 10])
+            .on('zoom', function (d) {
+                d3.select(this).attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')')
+            })
+        var g = svg.append('g').call(zoom)
+        g.selectAll('circle')
+            .data(circles)
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) {return d.cx})
+            .attr('cy', function (d) {return d.cy})
+            .attr('r', function (d) {return d.r})
+            .attr('fill', 'black')
+    </script>
 </body>
 </html>
